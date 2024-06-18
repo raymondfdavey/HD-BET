@@ -1,4 +1,4 @@
 import os
 
-# please refer to the readme on where to get the parameters. Save them in this folder:
-folder_with_parameter_files = os.path.join(os.path.expanduser('~'), 'hd-bet_params')
+# Update the folder path to the location where you have saved the parameter files
+folder_with_parameter_files = "../hd-bet_params"
