@@ -5,7 +5,7 @@ from HD_BET.run import run_hd_bet
 from HD_BET.utils import maybe_mkdir_p, subfiles
 import HD_BET
 
-
+print('WHWYHWY')
 if __name__ == "__main__":
     print("\n########################")
     print("If you are using hd-bet, please cite the following paper:")

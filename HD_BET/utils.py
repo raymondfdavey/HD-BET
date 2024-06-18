@@ -32,7 +32,10 @@ def maybe_download_parameters(fold=0, force_overwrite=False):
     if not os.path.isfile(out_filename):
         url = "https://zenodo.org/record/2540695/files/%d.model?download=1" % fold
         print("Downloading", url, "...")
+        # print(out_filename)
         data = urlopen(url).read()
+            # Create the directory if it doesn't exist
+        os.makedirs(os.path.dirname(out_filename), exist_ok=True)   
         with open(out_filename, 'wb') as f:
             f.write(data)
 
