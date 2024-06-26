@@ -19,7 +19,7 @@ def apply_bet(img, bet, out_fname):
     sitk.WriteImage(out, out_fname)
 
 
-def run_hd_bet(mri_fnames, output_fnames, mode="accurate", config_file=os.path.join(HD_BET.__path__[0], "config.py"), device=0,
+def run_hd_bet(mri_fnames, output_fnames, mode="accurate", config_file=os.path.join(HD_BET.__path__[0], "config.py"), device='mps',
                postprocess=False, do_tta=True, keep_mask=True, overwrite=True, bet=False):
     """
 
@@ -35,6 +35,7 @@ def run_hd_bet(mri_fnames, output_fnames, mode="accurate", config_file=os.path.j
     :return:
     """
 
+        
     list_of_param_files = []
 
     if mode == 'fast':
@@ -59,8 +60,10 @@ def run_hd_bet(mri_fnames, output_fnames, mode="accurate", config_file=os.path.j
     net, _ = cf.get_network(cf.val_use_train_mode, None)
     if device == "cpu":
         net = net.cpu()
+    elif device == "mps":
+        net = net.to(torch.device("mps"))
     else:
-        net.cuda(device)
+        net = net.cuda(device)
 
     if not isinstance(mri_fnames, (list, tuple)):
         mri_fnames = [mri_fnames]
@@ -89,6 +92,7 @@ def run_hd_bet(mri_fnames, output_fnames, mode="accurate", config_file=os.path.j
                 continue
 
             softmax_preds = []
+
 
             print("prediction (CNN id)...")
             for i, p in enumerate(params):
