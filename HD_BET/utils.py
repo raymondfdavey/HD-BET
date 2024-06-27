@@ -5,7 +5,10 @@ import numpy as np
 from skimage.morphology import label
 import os
 from HD_BET.paths import folder_with_parameter_files
+import certifi
+import ssl
 
+os.environ['SSL_CERT_FILE'] = certifi.where()
 
 def get_params_fname(fold):
     return os.path.join(folder_with_parameter_files, "%d.model" % fold)
@@ -32,7 +35,13 @@ def maybe_download_parameters(fold=0, force_overwrite=False):
     if not os.path.isfile(out_filename):
         url = "https://zenodo.org/record/2540695/files/%d.model?download=1" % fold
         print("Downloading", url, "...")
-        data = urlopen(url).read()
+        try:
+            data = urlopen(url).read()
+        except Exception as e:
+            print(f"Error downloading: {e}")
+            print("Trying with SSL verification disabled...")
+            context = ssl._create_unverified_context()
+            data = urlopen(url, context=context).read()
         with open(out_filename, 'wb') as f:
             f.write(data)
 

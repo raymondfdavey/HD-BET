@@ -111,3 +111,4 @@ ENV/
 *.jpeg
 
 *.model
+*.DS_Store
