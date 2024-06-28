@@ -2,6 +2,7 @@
 __pycache__/
 *.py[cod]
 *$py.class
+.DS_Store
 
 # C extensions
 *.so
@@ -109,5 +110,5 @@ ENV/
 *.png
 *.jpg
 *.jpeg
-.DS_Store
-# *.model
+
+*.model

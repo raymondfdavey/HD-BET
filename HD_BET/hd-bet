@@ -4,8 +4,9 @@ import os
 from HD_BET.run import run_hd_bet
 from HD_BET.utils import maybe_mkdir_p, subfiles
 import HD_BET
+import torch
 
-print('WHWYHWY')
+
 if __name__ == "__main__":
     print("\n########################")
     print("If you are using hd-bet, please cite the following paper:")
@@ -28,11 +29,11 @@ if __name__ == "__main__":
                                                                 'our cross-validation as an ensemble. Default: '
                                                                     'accurate',
                         required=False)
-    parser.add_argument('-device', default='0', type=str, help='used to set on which device the prediction will run. '
-                                                               'Must be either int or str. Use int for GPU id or '
-                                                               '\'cpu\' to run on CPU. When using CPU you should '
-                                                               'consider disabling tta. Default for -device is: 0',
-                        required=False)
+    parser.add_argument('-device', default='mps', type=str, help='used to set on which device the prediction will run. '
+                                                               'Must be either int, str, or \'mps\'. Use int for GPU id, '
+                                                               '\'cpu\' to run on CPU, or \'mps\' for M1 Macs. '
+                                                               'Default: mps',
+                        required=False),
     parser.add_argument('-tta', default=1, required=False, type=int, help='whether to use test time data augmentation '
                                                                           '(mirroring). 1= True, 0=False. Disable this '
                                                                           'if you are using CPU to speed things up! '
@@ -72,8 +73,16 @@ if __name__ == "__main__":
 
     if device == 'cpu':
         pass
+    elif device == 'mps':
+        if not torch.backends.mps.is_available():
+            print("MPS is not available. Falling back to CPU.")
+            device = 'cpu'
     else:
-        device = int(device)
+        try:
+            device = int(device)
+        except ValueError:
+            raise ValueError(f"Invalid device specification: {device}. Use 'cpu', 'mps', or a valid GPU id (int).")
+
 
     if os.path.isdir(input_file_or_dir):
         maybe_mkdir_p(output_file_or_dir)
