@@ -36,7 +36,7 @@ def reshape_by_padding_upper_coords(image, new_shape, pad_value=None):
 
 
 def predict_case_3D_net(net, patient_data, do_mirroring, num_repeats, BATCH_SIZE=None,
-                        new_shape_must_be_divisible_by=16, min_size=None, main_device='mps', mirror_axes=(2, 3, 4)):
+                           new_shape_must_be_divisible_by=16, min_size=None, main_device=0, mirror_axes=(2, 3, 4)):
     with torch.no_grad():
         pad_res = []
         for i in range(patient_data.shape[0]):
@@ -57,9 +57,7 @@ def predict_case_3D_net(net, patient_data, do_mirroring, num_repeats, BATCH_SIZE
         a = torch.rand(data.shape).float()
 
         if main_device == 'cpu':
-            a = a.cpu()
-        elif main_device == 'mps':
-            a = a.to(torch.device("mps"))
+            pass
         else:
             a = a.cuda(main_device)
 

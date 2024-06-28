@@ -8,7 +8,7 @@ from HD_BET.utils import postprocess_prediction, SetNetworkToVal, get_params_fna
 import os
 import HD_BET
 
-
+print('HIHIHIH')
 def apply_bet(img, bet, out_fname):
     img_itk = sitk.ReadImage(img)
     img_npy = sitk.GetArrayFromImage(img_itk)
@@ -19,7 +19,7 @@ def apply_bet(img, bet, out_fname):
     sitk.WriteImage(out, out_fname)
 
 
-def run_hd_bet(mri_fnames, output_fnames, mode="accurate", config_file=os.path.join(HD_BET.__path__[0], "config.py"), device='mps',
+def run_hd_bet(mri_fnames, output_fnames, mode="accurate", config_file=os.path.join(HD_BET.__path__[0], "config.py"), device=0,
                postprocess=False, do_tta=True, keep_mask=True, overwrite=True, bet=False):
     """
 
@@ -34,8 +34,8 @@ def run_hd_bet(mri_fnames, output_fnames, mode="accurate", config_file=os.path.j
     CPU you may want to turn that off to speed things up
     :return:
     """
+    print(f"Running HD-BET on {len(mri_fnames)} file(s)...")
 
-        
     list_of_param_files = []
 
     if mode == 'fast':
@@ -56,14 +56,14 @@ def run_hd_bet(mri_fnames, output_fnames, mode="accurate", config_file=os.path.j
 
     cf = imp.load_source('cf', config_file)
     cf = cf.config()
-
+    print('1')
     net, _ = cf.get_network(cf.val_use_train_mode, None)
     if device == "cpu":
+        print('2')
         net = net.cpu()
-    elif device == "mps":
-        net = net.to(torch.device("mps"))
     else:
-        net = net.cuda(device)
+        print('3')
+        net.cuda(device)
 
     if not isinstance(mri_fnames, (list, tuple)):
         mri_fnames = [mri_fnames]
@@ -72,6 +72,7 @@ def run_hd_bet(mri_fnames, output_fnames, mode="accurate", config_file=os.path.j
         output_fnames = [output_fnames]
 
     assert len(mri_fnames) == len(output_fnames), "mri_fnames and output_fnames must have the same length"
+    print('4')
 
     params = []
     for p in list_of_param_files:
@@ -92,7 +93,6 @@ def run_hd_bet(mri_fnames, output_fnames, mode="accurate", config_file=os.path.j
                 continue
 
             softmax_preds = []
-
 
             print("prediction (CNN id)...")
             for i, p in enumerate(params):
